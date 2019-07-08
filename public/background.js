@@ -11,6 +11,7 @@ chrome.contextMenus.create({
       console.log("mobilenet model loaded");
       model.classify(imageData).then(predictions => {
         console.log("predictions", predictions);
+        alert(JSON.stringify(predictions, null, 4));
       });
     });
   }
