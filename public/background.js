@@ -1,20 +1,17 @@
-chrome.contextMenus.create({
-  title: "Label image",
-  contexts: ["image"],
-  onclick: function(item) {
-    console.log("context", item);
-
-    Promise.all([
-      convertBase64ImageToImageData(item.srcUrl),
-      mobilenet.load()
-    ]).then(([imageData, model]) => {
-      console.log("mobilenet model loaded");
-      model.classify(imageData).then(predictions => {
-        console.log("predictions", predictions);
-        alert(JSON.stringify(predictions, null, 4));
+mobilenet.load().then(model => {
+  console.log("mobilenet model loaded");
+  chrome.contextMenus.create({
+    title: "Label image",
+    contexts: ["image"],
+    onclick: function(item) {
+      convertBase64ImageToImageData(item.srcUrl).then(imageData => {
+        model.classify(imageData).then(predictions => {
+          console.log("predictions", predictions);
+          alert(JSON.stringify(predictions, null, 4));
+        });
       });
-    });
-  }
+    }
+  });
 });
 
 function convertBase64ImageToImageData(dataURI) {
