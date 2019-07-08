@@ -16,7 +16,7 @@
         "http://*/*",
         "https://*/*"
       ],
-      "js": ["content.js"],
+      "js": ["vendor/tfjs_1.0.1.js", "vendor/mobilenet_v1.0.0.js", "content.js"],
       "run_at": "document_end"
     }
   ],
