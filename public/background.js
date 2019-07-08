@@ -1,6 +1,7 @@
 mobilenet.load().then(model => {
   console.log("mobilenet model loaded");
 
+  // TODO: handle case where mobilenet isn't loaded yet - have this wait until it is
   // Content script message handling
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const imageSrc = request.imageSrc;

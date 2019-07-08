@@ -8,24 +8,18 @@ for (let idx = 0; idx < document.images.length; idx++) {
     chrome.runtime.sendMessage({ imageSrc: image.currentSrc }, response => {
       console.log("response", response);
 
-      const imageParent = image.parentNode;
-      const container = document.createElement("div");
-      container.style.position = "relative";
-      container.style.width = `${image.width}px`;
-      container.style.height = `${image.height}px`;
-      const imageWrapper = document.createElement("div");
-      imageWrapper.style.position = "absolute";
-      const overlay = document.createElement("div");
-      overlay.style.width = "100%";
-      overlay.style.position = "absolute";
-      overlay.style.bottom = 0;
-      overlay.style.left = 0;
-      overlay.innerHTML = JSON.stringify(response);
+      const imageBbox = image.getBoundingClientRect();
 
-      imageWrapper.appendChild(image);
-      container.appendChild(imageWrapper);
-      container.appendChild(overlay);
-      imageParent.appendChild(container);
+      const overlay = document.createElement("div");
+      overlay.innerHTML = JSON.stringify(response);
+      overlay.style.position = "absolute";
+      overlay.style.left = `${imageBbox.left}px`;
+      overlay.style.top = `${imageBbox.top}px`;
+      overlay.style.width = `${image.width}px`;
+      overlay.style.color = "#fff";
+      overlay.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+      overlay.style.zIndex = "100000";
+      document.body.appendChild(overlay);
     });
   }
 }
