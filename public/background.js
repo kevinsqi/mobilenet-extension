@@ -1,7 +1,7 @@
 mobilenet.load().then(model => {
   console.log("mobilenet model loaded");
   chrome.contextMenus.create({
-    title: "Label image",
+    title: "Label image with MobileNet",
     contexts: ["image"],
     onclick: function(item) {
       convertBase64ImageToImageData(item.srcUrl).then(imageData => {
