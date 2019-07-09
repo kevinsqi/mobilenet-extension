@@ -1,32 +1,41 @@
-mobilenet.load().then(model => {
-  console.log("mobilenet model loaded");
+const loadMobilenet = mobilenet.load();
 
-  // TODO: handle case where mobilenet isn't loaded yet - have this wait until it is
-  // Content script message handling
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const imageSrc = request.imageSrc;
-    convertImageSrcToImageData(imageSrc).then(imageData => {
+// Kick off loading of mobilenet model
+loadMobilenet.then(model => {
+  console.log("mobilenet model loaded");
+});
+
+// TODO: handle case where mobilenet isn't loaded yet - have this wait until it is
+// Content script message handling
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const imageSrc = request.imageSrc;
+  convertImageSrcToImageData(imageSrc).then(imageData => {
+    // Wait until model is loaded
+    loadMobilenet.then(model => {
       model.classify(imageData).then(predictions => {
         sendResponse({ predictions: predictions });
       });
     });
-    // Indicate that sendResponse is async
-    return true;
   });
+  // Indicate that sendResponse is async
+  return true;
+});
 
-  // Context menu handling
-  chrome.contextMenus.create({
-    title: "Label image with MobileNet",
-    contexts: ["image"],
-    onclick: function(item) {
-      convertImageSrcToImageData(item.srcUrl).then(imageData => {
+// Context menu handling
+chrome.contextMenus.create({
+  title: "Label image with MobileNet",
+  contexts: ["image"],
+  onclick: function(item) {
+    convertImageSrcToImageData(item.srcUrl).then(imageData => {
+      // Wait until model is loaded
+      loadMobilenet.then(model => {
         model.classify(imageData).then(predictions => {
           console.log("predictions", predictions);
           alert(JSON.stringify(predictions, null, 4));
         });
       });
-    }
-  });
+    });
+  }
 });
 
 function convertImageSrcToImageData(imageSrc) {
